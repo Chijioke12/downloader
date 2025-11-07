@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Content Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Dark mode support
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+</head>
+<body class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Universal Content Downloader
+            </h1>
+            <p class="text-lg text-gray-600 dark:text-gray-300">
+                Download and convert any web content including media files of any size
+            </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <div class="text-2xl mb-3">🎵</div>
+                <h3 class="font-semibold mb-2">Media Downloads</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Download MP3, MP4, AVI, MOV, WAV, FLAC, AAC, WebM, MKV files</p>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <div class="text-2xl mb-3">📄</div>
+                <h3 class="font-semibold mb-2">Content Conversion</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Convert web content to text, Markdown, or HTML</p>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <div class="text-2xl mb-3">📊</div>
+                <h3 class="font-semibold mb-2">Metadata Extraction</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Extract metadata from web pages</p>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <div class="text-2xl mb-3">🚀</div>
+                <h3 class="font-semibold mb-2">Large File Support</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Support for large files with streaming</p>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <div class="text-2xl mb-3">🌐</div>
+                <h3 class="font-semibold mb-2">CORS Enabled</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">CORS enabled for web app integration</p>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <div class="text-2xl mb-3">⚡</div>
+                <h3 class="font-semibold mb-2">Modern Runtime</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Built with Node.js 22.x and Web Standards</p>
+            </div>
+        </div>
+
+        <!-- API Testing Interface -->
+        <div class="space-y-8">
+            <!-- Convert Content Section -->
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <h2 class="text-2xl font-bold mb-4">🔄 Convert Web Content</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">URL to Convert</label>
+                        <input type="url" id="convertUrl" placeholder="https://example.com/article" 
+                               class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Format</label>
+                            <select id="convertFormat" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="markdown">Markdown</option>
+                                <option value="text">Text</option>
+                                <option value="html">HTML</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="includeMetadata" checked class="mr-2">
+                                <span class="text-sm">Include Metadata</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button onclick="convertContent()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors">
+                        Convert Content
+                    </button>
+                </div>
+                <div id="convertResult" class="mt-4 hidden">
+                    <h3 class="font-semibold mb-2">Result:</h3>
+                    <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md text-sm overflow-auto max-h-96"></pre>
+                </div>
+            </div>
+
+            <!-- Download Media Section -->
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <h2 class="text-2xl font-bold mb-4">📥 Download Media Files</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Media URL</label>
+                        <input type="url" id="downloadUrl" placeholder="https://example.com/song.mp3" 
+                               class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Custom Filename (optional)</label>
+                        <input type="text" id="downloadFilename" placeholder="my-file.mp3" 
+                               class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <button onclick="getFileInfo()" class="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md transition-colors">
+                            Get File Info
+                        </button>
+                        <button onclick="downloadFile()" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition-colors">
+                            Download File
+                        </button>
+                    </div>
+                </div>
+                <div id="downloadResult" class="mt-4 hidden">
+                    <h3 class="font-semibold mb-2">Result:</h3>
+                    <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md text-sm overflow-auto max-h-96"></pre>
+                </div>
+            </div>
+
+            <!-- API Information -->
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                <h2 class="text-2xl font-bold mb-4">ℹ️ API Information</h2>
+                <button onclick="getApiInfo()" class="bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md transition-colors mb-4">
+                    Get API Info
+                </button>
+                <div id="apiInfoResult" class="hidden">
+                    <pre class="bg-gray-100 dark:bg-gray-900 p-4 rounded-md text-sm overflow-auto max-h-96"></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Endpoints Documentation -->
+        <div class="mt-12 space-y-6">
+            <h2 class="text-2xl font-bold">📚 API Endpoints</h2>
+            
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                    <h3 class="text-lg font-semibold mb-3">POST /api/convert</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Convert web content to different formats</p>
+                    <pre class="text-xs bg-gray-100 dark:bg-gray-900 p-3 rounded overflow-auto"><code>{
+  "url": "https://example.com/article",
+  "format": "markdown",
+  "includeMetadata": true
+}</code></pre>
+                </div>
+                
+                <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg border">
+                    <h3 class="text-lg font-semibold mb-3">POST /api/download</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">Download media files</p>
+                    <pre class="text-xs bg-gray-100 dark:bg-gray-900 p-3 rounded overflow-auto"><code>{
+  "url": "https://example.com/song.mp3",
+  "download": true,
+  "filename": "my-song.mp3"
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p>Universal Content Downloader v2.0.0 • Node.js 22.x Runtime • Built with Web Standards</p>
+        </footer>
+    </div>
+
+    <script>
+        const baseUrl = window.location.origin;
+
+        function showResult(elementId, data, success = true) {
+            const element = document.getElementById(elementId);
+            const pre = element.querySelector('pre');
+            pre.textContent = JSON.stringify(data, null, 2);
+            pre.className = `p-4 rounded-md text-sm overflow-auto max-h-96 ${success ? 'bg-gray-100 dark:bg-gray-900' : 'bg-red-50 dark:bg-red-900 text-red-800 dark:text-red-200'}`;
+            element.classList.remove('hidden');
+        }
+
+        function showError(elementId, error) {
+            showResult(elementId, { error: error.message || error }, false);
+        }
+
+        async function convertContent() {
+            const url = document.getElementById('convertUrl').value;
+            const format = document.getElementById('convertFormat').value;
+            const includeMetadata = document.getElementById('includeMetadata').checked;
+            
+            if (!url) {
+                showError('convertResult', 'Please enter a URL');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/api/convert`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, format, includeMetadata })
+                });
+                
+                const data = await response.json();
+                showResult('convertResult', data, response.ok);
+            } catch (error) {
+                showError('convertResult', error);
+            }
+        }
+
+        async function getFileInfo() {
+            const url = document.getElementById('downloadUrl').value;
+            
+            if (!url) {
+                showError('downloadResult', 'Please enter a URL');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/api/download`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, download: false })
+                });
+                
+                const data = await response.json();
+                showResult('downloadResult', data, response.ok);
+            } catch (error) {
+                showError('downloadResult', error);
+            }
+        }
+
+        async function downloadFile() {
+            const url = document.getElementById('downloadUrl').value;
+            const filename = document.getElementById('downloadFilename').value;
+            
+            if (!url) {
+                showError('downloadResult', 'Please enter a URL');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/api/download`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, download: true, filename })
+                });
+                
+                if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
+                    const data = await response.json();
+                    showResult('downloadResult', data);
+                } else if (response.ok) {
+                    // File download
+                    const blob = await response.blob();
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = filename || 'download';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(downloadUrl);
+                    
+                    showResult('downloadResult', { success: true, message: 'File downloaded successfully' });
+                } else {
+                    const data = await response.json();
+                    showResult('downloadResult', data, false);
+                }
+            } catch (error) {
+                showError('downloadResult', error);
+            }
+        }
+
+        async function getApiInfo() {
+            try {
+                const response = await fetch(`${baseUrl}/api/info`);
+                const data = await response.json();
+                showResult('apiInfoResult', data, response.ok);
+            } catch (error) {
+                showError('apiInfoResult', error);
+            }
+        }
+    </script>
+</body>
+</html>
